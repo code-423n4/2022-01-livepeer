@@ -58,7 +58,7 @@ Under "SPONSORS ADD INFO HERE" heading below, include the following:
 
 ---
 
-# LivePeer contest details
+# Livepeer contest details
 - $52,250 USDC + $19,000 LPT main award pot
 - $2,750 USDC + $1,000 LPT gas optimization award pot
 - Join [C4 Discord](https://discord.gg/code4rena) to register
