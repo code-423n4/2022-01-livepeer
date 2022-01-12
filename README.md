@@ -91,7 +91,6 @@ git checkout ebf68d11879c2798c5ec0735411b08d0bea4f287
   - L1 BondingManager [1]
   - L1 TicketBroker [1]
   - L1 LivepeerToken [1]
-  - Inbox [3]
   - `L1LPTGateway.sol`
   - `BridgeMinter.sol`
 - `L2Migrator.sol` external calls
