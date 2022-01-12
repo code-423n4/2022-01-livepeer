@@ -18,10 +18,10 @@ Some of the checklists in this doc are for **C4 (🐺)** and some of them are fo
 
 Under "SPONSORS ADD INFO HERE" heading below, include the following:
 
-- [ ] Name of each contract and:
-  - [ ] lines of code in each
-  - [ ] external contracts called in each
-  - [ ] libraries used in each
+- [x] Name of each contract and:
+  - [x] lines of code in each
+  - [x] external contracts called in each
+  - [x] libraries used in each
 - [x] Describe any novel or unique curve logic or mathematical models implemented in the contracts
 - [x] Does the token conform to the ERC-20 standard? In what specific ways does it differ?
 - [x] Describe anything else that adds any special logic that makes your approach unique
@@ -83,34 +83,49 @@ Note: LOC includes comments and many of these contracts have a lot of comments!
 
 **arbitrum-lpt-bridge**
 
-The code for these contracts can be found at https://github.com/livepeer/arbitrum-lpt-bridge with the code frozen at Git commit hash TBD.
+The code for these contracts can be checked out at a code frozen Git commit hash:
+
+```
+git clone https://github.com/livepeer/arbitrum-lpt-bridge
+git checkout ebf68d11879c2798c5ec0735411b08d0bea4f287
+```
 
 | Contract Name           | LOC |
 | ----------------------- | --- |
-| LivepeerToken.sol       |     |
-| L1Escrow.sol            |     |
-| L1LPTGateway.sol        |     |
-| L2LPTGateway.sol        |     |
-| L1Migrator.sol          |     |
-| L2Migrator.sol          |     |
-| DelegatorPool.sol       |     |
-| L1LPTDataCache.sol      |     |
-| L2LPTDataCache.sol      |     |
-| L1ArbitrumMessenger.sol |     |
-| L2ArbitrumMessenger.sol |     |
-| IL1LPTGateway.sol       |     |
-| IL2LPTGateway.sol       |     |
-| IMigrator.sol           |     |
+| LivepeerToken.sol       | 44  |
+| L1Escrow.sol            | 29  |
+| L1LPTGateway.sol        | 240 |
+| L2LPTGateway.sol        | 181 |
+| L1Migrator.sol          | 529 |
+| L2Migrator.sol          | 320 |
+| DelegatorPool.sol       | 113 |
+| L1LPTDataCache.sol      | 71  |
+| L2LPTDataCache.sol      | 96  |
+| L1ArbitrumMessenger.sol | 78  |
+| L2ArbitrumMessenger.sol | 44  |
+| IL1LPTGateway.sol       | 46  |
+| IL2LPTGateway.sol       | 44  |
+| IMigrator.sol           | 46  |
+| ILivepeerToken.sol      | 14  |
+| ControlledGateway.sol   | 33  |
 
 `LivepeerToken.sol`
 - To be deployed on L2
 - ERC-20 compliant
 - Role based authorization for minting and burning
 - Supports `permit` based approvals with EIP-712 signatures
+- Libraries
+  - OpenZeppelin
+    - AccessControl
+    - ERC20
+    - ERC20Permit
 
 `L1Escrow.sol`
 - To be deployed on L1
 - Escrows L1 LPT for the `L1LPTGateway` for L1 -> L2 LPT transfers and L2 -> L1 LPT withdrawals
+- Libraries
+  - OpenZeppelin
+    - AccessControl
 
 `L1LPTGateway.sol` and `L2LPTGateway.sol`
 - To be deployed on L1 and L2 respectively
@@ -119,7 +134,6 @@ The code for these contracts can be found at https://github.com/livepeer/arbitru
 - Implements `IL1LPTGateway.sol` and `IL2LPTGateway.sol` respectively
 - `L1LPTGateway.sol` external calls
   - L1 LivepeerToken [1]
-  - Inbox [3]
   - `BridgeMinter.sol`
 - `L2LPTGateway.sol` external calls
   - `LivepeerToken.sol`
@@ -143,12 +157,25 @@ The code for these contracts can be found at https://github.com/livepeer/arbitru
   - L2 TicketBroker [2]
   - L2 MerkleSnapshot [2]
   - `DelegatorPool.sol`
+- `L1Migrator.sol` libraries
+  - OpenZeppelin
+    - EIP712
+    - Pausable
+    - AccessControl
+    - ECDSA
+- `L2Migrator.sol` libraries
+  - OpenZeppelin
+    - Clones
+    - AccessControl
 
 `DelegatorPool.sol`
 - To be deployed on L2
 - New instances are deployed by `L2Migrator` to own the delegated stake of migrated transcoders in the L2 BondingManager so that delegators can claim their stake if they migrate later on
 - External calls
   - L2 BondingManager [2]
+- Libraries
+  - OpenZeppelin
+    - Initializable
 
 `L1LPTDataCache.sol` and `L2LPTDataCache.sol`
 - To be deployed on L1 and L2 respectively
@@ -156,15 +183,23 @@ The code for these contracts can be found at https://github.com/livepeer/arbitru
 - Inherits from `L1ArbitrumMessenger.sol` and `L2ArbitrumMessenger.sol` respectively
 - `L1LPTDataCache.sol` external calls
   - L1 LivepeerToken [1]
-  - Inbox [3]
 - `L2LPTDataCache.sol` external calls
   - `L2LPTGateway.sol`
+- `L2LPTDataCache.sol` libraries
+  - OpenZeppelin
+    - Ownable
 
 `L1ArbitrumMessenger.sol`
 - Abstract contract with helpers for cross-chain transactions and sending L1 -> L2 transactions
+- External calls
+  - Inbox [3]
+  - Outbox [3]
+  - Bridge [3]
 
 `L2ArbitrumMessenger.sol`
 - Abstract contract with helpers for cross-chain transactions and sending L2 -> L1 transactions
+- External calls
+  - ArbSys [3]
 
 `IL1LPTGateway.sol`
 - Interface for `L1LPTGateway.sol`
@@ -174,6 +209,16 @@ The code for these contracts can be found at https://github.com/livepeer/arbitru
 
 `IMigrator.sol`
 - Interface with shared data structures for `L1Migrator.sol` and `L2Migrator.sol`
+
+`ILivepeerToken.sol`
+- Interface for `LivepeerToken.sol`
+
+`ControlledGateway.sol`
+- Base contract with ACL and pausing logic that is inherited by `L1LPTGateway` and `L2LPTGateway`
+- Libraries
+  - OpenZeppelin
+    - AccessControl
+    - Pausable
 
 [1] L1 protocol contract
 [2] L2 protocol contract
@@ -188,16 +233,29 @@ git clone https://github.com/livepeer/protocol
 git checkout 20e7ebb86cdb4fe9285bf5fea02eb603e5d48805
 ```
 
-| Contract Name                                                                                                                           | LOC |
-| --------------------------------------------------------------------------------------------------------------------------------------- | --- |
-| [BridgeMinter.sol](https://github.com/livepeer/protocol/blob/20e7ebb86cdb4fe9285bf5fea02eb603e5d48805/contracts/token/BridgeMinter.sol) | 138 |
+| Contract Name    | LOC |
+| ---------------- | --- |
+| BridgeMinter.sol | 138 |
+| Manager.sol      | 63  |
+| IManager.sol     | 8   |
+| IController.sol  | 17  |
 
 `BridgeMinter.sol`
 - To be deployed on L1
 - Handles minting L1 LPT
 - Holds ETH and LPT from the L1 protocol that should be sent to L2
+- Inherits from `Manager.sol`
 - External calls
   - L1 LivepeerToken [1]
+
+`Manager.sol`
+- Base contract with functionality for being managed by a Controller contract
+
+`IManager.sol`
+- Interface for `Manager.sol`
+
+`IController.sol`
+- Interface for Controller
 
 ## External Dependencies
 
