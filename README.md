@@ -440,7 +440,20 @@ This mechanism is used by delegators to directly submit a transaction on L2 to c
 - The address' delegated stake in the L1 BondingManager (via the `delegatedAmount` field in `BondingManager.getDelegator()`)
 - The address' delegate in the L1 BondingManager (via the `delegateAddress` field in `BondingManager.getDelegator()`) 
 
+The leaf format for the Merkle tree will be:
+
+```
+keccak256(abi.encodePacked(
+    delegator,
+    delegate,
+    stake,
+    fees
+))
+```
+
 The root of this tree is stored in a L2 MerkleSnapshot contract. 
+
+The code that will be used to generate the Merkle tree snapshot is at https://github.com/livepeer/merkle-earnings-cli/tree/LIP-73.
 
 The following occurs when a delegator directly claims stake on L2:
 
