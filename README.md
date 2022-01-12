@@ -73,6 +73,10 @@ This repo will be made public before the start of the contest. (C4 delete this l
 
 The contracts under audit implement the functionality required for the [LIP-73 - Arbitrum One Migration](https://github.com/livepeer/LIPs/blob/master/LIPs/LIP-73.md) upgrade for the Livepeer protocol that is currently implemented by a set of protocol contracts deployed on L1 Ethereum. The goal of the upgrade is to migrate users to protocol contracts deployed on Arbirum One which will be referred to as L2 going forward.
 
+The primary focus of this audit is on the new LIP-73 contracts that will be deployed on L1 and L2 that facilitate various L1 <> L2 workflows. However, a number of these contracts also make external calls to either certain protocol contracts that are already deployed on L1 or protocol contracts that will be deployed on L2. For an overview of the functionality of these protocol contracts, refer to [this spec](https://github.com/livepeer/wiki/blob/master/spec/streamflow/spec.md). For a general overview of the protocol, refer to [the primer](https://livepeer.org/primer).
+
+The recommendation for wardens is to focus on the LIP-73 contracts - links to the protocol contracts are provided as well for background/reference, however, if there are any findings surfaced in those contracts during the contest those are certainly welcome as well.
+
 # Contract Overview
 
 Note: LOC includes comments and many of these contracts have a lot of comments!
@@ -105,9 +109,11 @@ The code for these contracts can be found at https://github.com/livepeer/arbitru
 - Supports `permit` based approvals with EIP-712 signatures
 
 `L1Escrow.sol`
+- To be deployed on L1
 - Escrows L1 LPT for the `L1LPTGateway` for L1 -> L2 LPT transfers and L2 -> L1 LPT withdrawals
 
 `L1LPTGateway.sol` and `L2LPTGateway.sol`
+- To be deployed on L1 and L2 respectively
 - Handle L1 -> L2 LPT transfers and L2 -> L1 LPT withdrawals
 - Inherits from `L1ArbitrumMessenger.sol` and `L2ArbitrumMessenger.sol` respectively
 - Implements `IL1LPTGateway.sol` and `IL2LPTGateway.sol` respectively
@@ -120,6 +126,7 @@ The code for these contracts can be found at https://github.com/livepeer/arbitru
   - `L2LPTDataCache.sol`
 
 `L1Migrator.sol` and `L2Migrator.sol`
+- To be deployed on L1 and L2 respectively
 - Handle L1 -> L2 transcoder/delegator, unbonding locks and deposit/reserve migrations
 - Handle L1 -> L2 ETH and LPT (L1 protocol funds) migrations
 - Inherits from `L1ArbitrumMessenger.sol` and `L2ArbitrumMessenger.sol` respectively
@@ -138,11 +145,13 @@ The code for these contracts can be found at https://github.com/livepeer/arbitru
   - `DelegatorPool.sol`
 
 `DelegatorPool.sol`
+- To be deployed on L2
 - New instances are deployed by `L2Migrator` to own the delegated stake of migrated transcoders in the L2 BondingManager so that delegators can claim their stake if they migrate later on
 - External calls
   - L2 BondingManager [2]
 
 `L1LPTDataCache.sol` and `L2LPTDataCache.sol`
+- To be deployed on L1 and L2 respectively
 - Handle L1 -> L2 reporting of L1 LPT total supply so that it can be cached on L2
 - Inherits from `L1ArbitrumMessenger.sol` and `L2ArbitrumMessenger.sol` respectively
 - `L1LPTDataCache.sol` external calls
@@ -184,6 +193,7 @@ git checkout 20e7ebb86cdb4fe9285bf5fea02eb603e5d48805
 | [BridgeMinter.sol](https://github.com/livepeer/protocol/blob/20e7ebb86cdb4fe9285bf5fea02eb603e5d48805/contracts/token/BridgeMinter.sol) | 138 |
 
 `BridgeMinter.sol`
+- To be deployed on L1
 - Handles minting L1 LPT
 - Holds ETH and LPT from the L1 protocol that should be sent to L2
 - External calls
@@ -193,13 +203,46 @@ git checkout 20e7ebb86cdb4fe9285bf5fea02eb603e5d48805
 
 **L1 protocol contracts**
 
-https://github.com/livepeer/protocol
+The contracts mentioned that are called by the LIP-73 contracts are:
+
+- L1 LivepeerToken
+  - [L1 deployment](https://etherscan.io/address/0x58b6a8a3302369daec383334672404ee733ab239)
+  - [Repo code](https://github.com/livepeer/protocol/blob/streamflow/contracts/token/LivepeerToken.sol)
+- L1 BondingManager
+  - [L1 deployment](https://etherscan.io/address/0x5fe3565db7f1dd8d6a9e968d45bd2aee3836a1d4)
+    - The L1 deployment is used via a [delegatecall proxy](https://etherscan.io/address/0x511bc4556d823ae99630ae8de28b9b80df90ea2e)
+  - [Repo code](https://github.com/livepeer/protocol/blob/streamflow/contracts/bonding/BondingManager.sol)
+- L1 TicketBroker
+  - [L1 deployment](https://etherscan.io/address/0x6F582E2bB19ac31D4B1e6eDD0c2eFEabD700f808)
+    - The L1 deployment is used via a [delegatecall proxy](https://etherscan.io/address/0x5b1ce829384eebfa30286f12d1e7a695ca45f5d2)
+  - [Repo code](https://github.com/livepeer/protocol/blob/streamflow/contracts/pm/TicketBroker.sol)
+
+The repo that contains these contracts is https://github.com/livepeer/protocol at Git commit hash 20e7ebb86cdb4fe9285bf5fea02eb603e5d48805.
 
 **L2 protocol contracts**
 
-https://github.com/livepeer/protocol/tree/confluence
+The contracts mentioned that are called by the LIP-73 contracts are:
+
+- L2 BondingManager
+  - [Repo code](https://github.com/livepeer/protocol/blob/confluence/contracts/bonding/BondingManager.sol)
+- L2 TicketBroker
+  - [Repo code](https://github.com/livepeer/protocol/blob/confluence/contracts/pm/TicketBroker.sol)
+- L2 MerkleSnapshot
+  - [Repo code](https://github.com/livepeer/protocol/blob/confluence/contracts/snapshots/MerkleSnapshot.sol)
+- L2 Minter
+  - [Repo code](https://github.com/livepeer/protocol/blob/confluence/contracts/token/Minter.sol)
+
+The repo that contains these contracts is https://github.com/livepeer/protocol/tree/confluence at Git commit hash 439445f3ab6ef88f490ee2fdafb84c7d8fee76f3.
 
 **Arbitrum**
+
+The contracts mentioned that are called by the LIP-73 contracts are:
+
+- Inbox 
+  - [L1 deployment](https://etherscan.io/address/0x4Dbd4fc535Ac27206064B68FfCf827b0A60BAB3f)
+  - [Repo code](https://github.com/OffchainLabs/arbitrum/blob/master/packages/arb-bridge-eth/contracts/bridge/Inbox.sol)
+
+Additional resources for Arbitrum can be found at:
 
 - https://developer.offchainlabs.com/docs/mainnet
 - https://developer.offchainlabs.com/docs/public_testnet
@@ -210,6 +253,19 @@ https://github.com/livepeer/protocol/tree/confluence
 A few of the sections below mention the `L1GatewayRouter` and `L2GatewayRouter` contracts which are deployed by Offchain Labs to map L1/L2 tokens with L1/L2 gateway contracts. Additional information about these contracts can be found in the [Arbitrum docs](https://developer.offchainlabs.com/docs/bridging_assets). The rest of this document assumes that the `L1GatewayRouter` and `L2GatewayRouter` map L1 LPT and L2 LPT correctly to `L1LPTGateway` and `L2LPTGateway` contracts such that if users choose to transfer LPT between L1 and L2 using `L1GatewayRouter` or `L2GatewayRouter` the `L1LPTGateway` and `L2LPTGateway` contracts will be used under the hood.
 
 Additionally, note that the state of any L1 protocol contract that is referenced below will be frozen prior to the execution of these mechanisms.
+
+## LiveperToken ACL
+
+`LivepeerToken` uses role based authorization to determine which addresses are authorized to mint and burn LPT.
+
+The following contracts will have the minter role:
+
+- `L2LPTGateway`
+- L2 Minter
+
+The following contracts will have the burner role:
+
+- `L2LPTGateway`
 
 ## L1 -> L2 LPT Transfer
 
