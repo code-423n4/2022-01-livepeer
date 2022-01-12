@@ -75,6 +75,8 @@ The contracts under audit implement the functionality required for the [LIP-73 -
 
 # Contract Overview
 
+Note: LOC includes comments and many of these contracts have a lot of comments!
+
 **arbitrum-lpt-bridge**
 
 The code for these contracts can be found at https://github.com/livepeer/arbitrum-lpt-bridge with the code frozen at Git commit hash TBD.
@@ -170,11 +172,16 @@ The code for these contracts can be found at https://github.com/livepeer/arbitru
 
 **protocol**
 
-The code for these contracts can be found at https://github.com/livepeer/protocol with the code frozen at Git commit hash TBD.
+The code for these contracts can be checked out at a code frozen Git commit hash:
 
-| Contract Name    | LOC |
-| ---------------- | --- |
-| BridgeMinter.sol |     |
+```
+git clone https://github.com/livepeer/protocol
+git checkout 20e7ebb86cdb4fe9285bf5fea02eb603e5d48805
+```
+
+| Contract Name                                                                                                                           | LOC |
+| --------------------------------------------------------------------------------------------------------------------------------------- | --- |
+| [BridgeMinter.sol](https://github.com/livepeer/protocol/blob/20e7ebb86cdb4fe9285bf5fea02eb603e5d48805/contracts/token/BridgeMinter.sol) | 138 |
 
 `BridgeMinter.sol`
 - Handles minting L1 LPT
