@@ -7,8 +7,6 @@
 - Starts January 13, 2022 00:00 UTC
 - Ends January 19, 2022 23:59 UTC
 
-This repo will be made public before the start of the contest. (C4 delete this line when made public)
-
 # Background
 
 The contracts under audit implement the functionality required for the [LIP-73 - Arbitrum One Migration](https://github.com/livepeer/LIPs/blob/master/LIPs/LIP-73.md) upgrade for the Livepeer protocol that is currently implemented by a set of protocol contracts deployed on L1 Ethereum. The goal of the upgrade is to migrate users to protocol contracts deployed on Arbirum One which will be referred to as L2 going forward.
