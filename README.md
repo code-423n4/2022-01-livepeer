@@ -79,7 +79,9 @@ The recommendation for wardens is to focus on the LIP-73 contracts - links to th
 
 # Contract Overview
 
-Note: LOC includes comments and many of these contracts have a lot of comments!
+The `L1LPTGateway`, `L2LPTGateway`, `L1Escrow` architecture is based off of the [Dai bridge architecture](https://github.com/makerdao/arbitrum-dai-bridge).
+
+Note: LOC includes comments.
 
 **arbitrum-lpt-bridge**
 
