@@ -1,6 +1,6 @@
 # Livepeer contest details
-- $52,250 USDC + $19,000 LPT main award pot
-- $2,750 USDC + $1,000 LPT gas optimization award pot
+- &#36;52,250 USDC + &#36;19,000 LPT main award pot
+- &#36;2,750 USDC + &#36;1,000 LPT gas optimization award pot
 - Join [C4 Discord](https://discord.gg/code4rena) to register
 - Submit findings [using the C4 form](https://code4rena.com/contests/2022-01-livepeer-contest/submit)
 - [Read our guidelines for more details](https://docs.code4rena.com/roles/wardens)
